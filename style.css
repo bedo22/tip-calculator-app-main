@@ -85,7 +85,7 @@
 /* Ensure html and body take full viewport height */
 html,
 body {
-  min-height: 100%;
+  min-height: 100vh;
 }
 
 /* Base body styles - applied to all text unless overridden */
@@ -98,7 +98,10 @@ body {
   
   /* Sticky footer pattern: pushes attribution to bottom */
   display: flex;
+  flex: 1;
   flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
 
 /* 
@@ -199,17 +202,21 @@ input[type="number"]::-webkit-inner-spin-button {
   Main calculator container
   Centers the calculator on the page and controls max width
   
-  FIX: Increased top padding from 3rem to better match the design.
-  This gives more breathing room at the top of the page.
+  Vertical centering technique:
+  - flex: 1 makes this container take all available viewport height
+  - display: flex + flex-direction: column creates a flex container
+  - justify-content: center vertically centers the content
+  
+  This is the "auto" way to center vertically - no manual margins needed!
 */
 .calculator {
   width: min(100%, 920px);
   margin-inline: auto;
-  padding: 4rem 1rem 2rem;  /* Increased top padding from 3rem */
-  flex: 1;
+  padding: 1rem;  /* Equal padding on all sides */
+  flex: 1;        /* Takes all available vertical space */
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: center;  /* Vertically centers the card */
 }
 
 /* Logo container - centers the logo image */
@@ -664,7 +671,6 @@ input[type="number"]::-webkit-inner-spin-button {
   /* More padding on larger screens */
   .calculator {
     padding: 4rem 1.5rem 2rem;
-    margin-top: 3rem;
   }
 
   /* More padding inside the card */
