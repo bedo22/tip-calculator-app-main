@@ -198,11 +198,14 @@ input[type="number"]::-webkit-inner-spin-button {
 /* 
   Main calculator container
   Centers the calculator on the page and controls max width
+  
+  FIX: Increased top padding from 3rem to better match the design.
+  This gives more breathing room at the top of the page.
 */
 .calculator {
   width: min(100%, 920px);
   margin-inline: auto;
-  padding: 3rem 1rem 2rem;
+  padding: 4rem 1rem 2rem;  /* Increased top padding from 3rem */
   flex: 1;
   display: flex;
   flex-direction: column;
@@ -473,14 +476,17 @@ input[type="number"]::-webkit-inner-spin-button {
   color: var(--color-green-900);
 }
 
-/* 
+/*
   Custom tip input field
   Looks similar to buttons but is an editable text field
+  
+  FIX: Increased padding to prevent "Custom" placeholder from being cut off.
+  The font is large (24px), so we need more horizontal space.
 */
 .calculator__tip-input {
   background-color: var(--color-grey-50);
   border: 2px solid transparent;
-  padding: 0.6rem 0.75rem;
+  padding: 0.6rem .5rem;  /* Increased from 0.75rem to prevent text cutoff */
   text-align: right;
   transition: border-color 0.2s ease, background-color 0.2s ease;
 }
@@ -658,6 +664,7 @@ input[type="number"]::-webkit-inner-spin-button {
   /* More padding on larger screens */
   .calculator {
     padding: 4rem 1.5rem 2rem;
+    margin-top: 3rem;
   }
 
   /* More padding inside the card */
