@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<!-- 
+  lang="en" tells browsers and screen readers what language the page is in.
+  This helps screen readers pronounce words correctly and helps search engines 
+  understand the content.
+-->
+<html lang="en">
+<head>
+  <!-- 
+    charset="UTF-8" ensures all characters display correctly, 
+    including special symbols and international characters.
+  -->
+  <meta charset="UTF-8">
+  
+  <!-- 
+    viewport meta tag makes the site responsive on mobile devices.
+    width=device-width = match the screen width
+    initial-scale=1.0 = don't zoom in or out by default
+  -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- Favicon: the small icon shown in the browser tab -->
+  <link rel="icon" type="image/png" sizes="32x32" href="./images/favicon-32x32.png">
+  <link rel="stylesheet" href="./style.css">
+  <script src="./script.js" defer></script>
+  <title>Frontend Mentor | Tip calculator app</title>
+
+</head>
+<body>
+  <!-- 
+    <main> = the primary content of the page (only one per page)
+    aria-label = provides an accessible name for screen readers
+    This tells assistive technology: "This is the Splitter tip calculator"
+  -->
+  <main class="calculator" aria-label="Splitter tip calculator">
+    
+    <!-- 
+      <header> = introductory content (logo, navigation, etc.)
+      BEM class naming: calculator__header means "header part OF calculator"
+    -->
+    <header class="calculator__header">
+      
+      <!-- 
+        <h1> = main heading of the page (most important heading)
+        The logo IS the heading - it's the app's name/title
+        Screen readers will read the alt text "Splitter" as the heading
+      -->
+      <h1 class="calculator__logo">
+        
+        <!-- 
+          <img> = displays the logo image
+          alt="Splitter" = text description for screen readers (REQUIRED for accessibility)
+          width/height = prevents layout shift while image loads (better performance)
+        -->
+        <img
+          class="calculator__logo-image"
+          src="./images/logo.svg"
+          alt="Splitter"
+          width="87"
+          height="54"
+        />
+      </h1>
+    </header>
+
+    <!-- 
+      <section> = a thematic grouping of content
+      This card contains the entire calculator interface
+      aria-label helps screen users understand what this section does
+    -->
+    <section class="calculator__card" aria-label="Tip calculator">
+      
+      <!-- 
+        <form> = container for interactive controls (inputs, buttons, etc.)
+        Even though we're not submitting to a server, <form> gives us:
+        - Enter key submits automatically
+        - type="reset" button clears all fields
+        - Built-in HTML5 validation
+        - Better accessibility structure
+        
+        action="#" = no server submission (we'll use JavaScript)
+        method="post" = HTTP method (not used here, but standard practice)
+      -->
+      <form class="calculator__form" action="#" method="post">
+        
+        <!-- 
+          This section contains all the input controls
+          aria-label describes what this section contains for screen readers
+        -->
+        <section class="calculator__controls" aria-label="Calculator inputs">
+          
+          <!-- 
+            DIV wrapper for the Bill field
+            Groups the label, icon, and input together for styling
+          -->
+          <div class="calculator__field">
+            
+            <!-- 
+              <label> = text that describes what the input is for
+              for="bill" = connects this label to the input with id="bill"
+              WHY NOT <p>? Labels are clickable and announce their purpose to screen readers
+              id="bill-label" = lets us reference this label from the input (aria-labelledby)
+            -->
+            <label class="calculator__label" for="bill">Bill</label>
+            
+            <!-- 
+              Wrapper div to position the dollar icon next to the input
+              This is for visual styling only
+            -->
+            <div class="calculator__input-wrapper">
+              
+              <!-- 
+                Decorative icon (dollar sign)
+                alt="" = empty alt text because it's decorative (screen readers skip it)
+                aria-hidden="true" = explicitly hide from screen readers
+                The icon adds visual context but isn't essential information
+              -->
+              <img
+                class="calculator__input-icon"
+                src="./images/icon-dollar.svg"
+                alt=""
+                aria-hidden="true"
+                width="10"
+                height="16"
+              />
+              
+              <!-- 
+                <input> = where users enter the bill amount
+                type="number" = shows number keyboard on mobile, prevents text input
+                id="bill" = unique identifier (must match label's for="bill")
+                name="bill" = name used when form is submitted (or in JavaScript)
+                min="0" = can't enter negative numbers
+                step="0.01" = allows decimal values (cents)
+                inputmode="decimal" = shows decimal keyboard on mobile devices
+                placeholder="0" = gray text shown when input is empty
+              -->
+              <input
+                class="calculator__input"
+                type="number"
+                id="bill"
+                min="0"
+                step="0.01"
+                inputmode="decimal"
+                placeholder="0"
+              />
+            </div>
+          </div>
+
+          <!-- 
+            <fieldset> = groups related form controls together
+            Used here to group the tip percentage buttons
+            <legend> = label for the fieldset (like a heading for the group)
+            
+            WHY <fieldset>? Screen readers announce "Select Tip %, group" when users 
+            navigate to it, giving context that these options belong together.
+          -->
+          <fieldset class="calculator__field calculator__field--tip">
+            
+            <!-- 
+              <legend> = required first child of <fieldset>
+              Acts as the title/label for the entire group of tip options
+            -->
+            <legend class="calculator__legend">Select Tip %</legend>
+
+            <!-- Container for tip buttons and custom input -->
+            <div class="calculator__tip-options">
+              
+              <!-- 
+                <button> = clickable button for preset tip percentages
+                type="button" = doesn't submit the form (unlike type="submit")
+                data-tip="5" = custom data attribute storing the tip value (accessed via JavaScript)
+                aria-pressed="false" = tells screen readers this is a toggle button (will change to "true" when selected)
+                
+                WHY <button> not <input type="radio">? 
+                - Buttons are easier to style
+                - Better touch targets on mobile
+                - More flexible for JavaScript handling
+              -->
+              <button class="calculator__tip-button" type="button" data-tip="5" aria-pressed="false">5%</button>
+              <button class="calculator__tip-button" type="button" data-tip="10" aria-pressed="false">10%</button>
+              <button class="calculator__tip-button" type="button" data-tip="15" aria-pressed="false">15%</button>
+              <button class="calculator__tip-button" type="button" data-tip="25" aria-pressed="false">25%</button>
+              <button class="calculator__tip-button" type="button" data-tip="50" aria-pressed="false">50%</button>
+              
+              <!-- 
+                Custom tip input - lets users enter their own percentage
+                aria-label = provides a label since there's no visible <label> element
+              -->
+              <input
+                class="calculator__tip-input"
+                type="number"
+                id="tip-custom"
+                min="0"
+                step="1"
+                inputmode="numeric"
+                placeholder="Custom"
+                aria-label="Custom tip percentage"
+              />
+            </div>
+          </fieldset>
+
+          <!-- Number of People field -->
+          <div class="calculator__field">
+            
+            <!-- 
+              Wrapper for label + error message
+              Allows positioning them side-by-side or stacked
+            -->
+            <div class="calculator__field-header">
+              
+              <!-- Label for the people input -->
+              <label class="calculator__label" for="people">Number of People</label>
+              
+              <!-- 
+                Error message shown when user enters 0 people
+                aria-live="polite" = screen readers will announce this when it appears
+                hidden = not visible by default (JavaScript will show it when needed)
+                id="people-error" = referenced by aria-describedby on the input
+              -->
+              <span class="calculator__error" id="people-error" aria-live="polite" hidden>Can't be zero</span>
+            </div>
+            
+            <div class="calculator__input-wrapper">
+              
+              <!-- Person icon (decorative, hidden from screen readers) -->
+              <img
+                class="calculator__input-icon"
+                src="./images/icon-person.svg"
+                alt=""
+                aria-hidden="true"
+                width="13"
+                height="16"
+              />
+              
+              <!-- 
+                Input for number of people
+                min="1" = at least 1 person required
+                step="1" = only whole numbers (can't have 2.5 people)
+                aria-describedby="people-error" = connects this input to the error message
+                aria-invalid="false" = tells screen readers if the input has an error (will change to "true")
+              -->
+              <input
+                class="calculator__input"
+                type="number"
+                id="people"
+                min="1"
+                step="1"
+                inputmode="numeric"
+                placeholder="0"
+                aria-describedby="people-error"
+                aria-invalid="false"
+              />
+            </div>
+          </div>
+        </section>
+
+        <!-- 
+          Results section - displays calculated tip and total amounts
+          Separate section for visual distinction (different background color)
+        -->
+        <section class="calculator__results" aria-label="Calculated results">
+          
+          <!-- 
+            <dl> = description list (for key-value pairs like labels and values)
+            <dt> = description term (the label, like "Tip Amount")
+            <dd> = description definition (the value, like "$10.00")
+            
+            WHY <dl>? It's semantically correct for label/value pairs and 
+            helps screen readers understand the relationship between labels and values.
+          -->
+          <dl class="calculator__summary">
+            
+            <!-- Tip Amount result -->
+            <div class="calculator__result">
+              
+              <!-- 
+                <dt> = the term being described
+                Contains both the label and the "/ person" unit
+              -->
+              <dt class="calculator__result-heading">
+                <span class="calculator__result-label">Tip Amount</span>
+                <span class="calculator__result-unit">/ person</span>
+              </dt>
+              
+              <!-- 
+                <dd> = the value for this term
+                <output> = element specifically for displaying calculation results
+                id="tip-amount" = JavaScript will update this element
+                aria-live="polite" = screen readers announce when the value changes
+              -->
+              <dd class="calculator__result-value">
+                <output class="calculator__output" id="tip-amount" aria-live="polite">$0.00</output>
+              </dd>
+            </div>
+
+            <!-- Total result (same structure as tip amount) -->
+            <div class="calculator__result">
+              <dt class="calculator__result-heading">
+                <span class="calculator__result-label">Total</span>
+                <span class="calculator__result-unit">/ person</span>
+              </dt>
+              <dd class="calculator__result-value">
+                <output class="calculator__output" id="total-per-person" aria-live="polite">$0.00</output>
+              </dd>
+            </div>
+          </dl>
+
+          <!-- 
+            Reset button - clears all form fields
+            type="reset" = built-in form functionality (no JavaScript needed!)
+            This is why we use <form> - we get this feature for free
+          -->
+          <button class="calculator__reset" type="reset">Reset</button>
+        </section>
+      </form>
+    </section>
+  </main>
+
+  <!-- 
+    Attribution footer (required by Frontend Mentor)
+    Credits the challenge source and the developer
+  -->
+  <div class="attribution">
+    Challenge by <a href="https://www.frontendmentor.io?ref=challenge" target="_blank">Frontend Mentor</a>.
+    Coded by <a href="https://www.frontendmentor.io/profile/bedo22">Abdelrahman khaled</a>.
+  </div>
+</body>
+</html>

@@ -1,0 +1,704 @@
+/* ==========================================================================
+   FONT IMPORT
+   ========================================================================== */
+
+/* 
+  Loads the Space Mono font from Google Fonts.
+  @import in CSS is an alternative to <link> in HTML.
+  wght;700 = only load the bold weight (700)
+  display=swap = use fallback font until Space Mono loads (prevents invisible text)
+*/
+@import url("https://fonts.googleapis.com/css2?family=Space+Mono:wght@700&display=swap");
+
+
+/* ==========================================================================
+   CSS CUSTOM PROPERTIES (VARIABLES)
+   ========================================================================== */
+
+/* 
+  :root = special selector that targets the <html> element
+  Variables defined here are available globally throughout the stylesheet.
+  
+  Why use variables?
+  - Change a color in one place, updates everywhere
+  - Consistent naming (no guessing which grey to use)
+  - Easier to create themes (dark mode later!)
+  
+  Naming convention: --color-{hue}-{lightness}
+  HSL values make it easy to adjust colors (hue, saturation, lightness)
+*/
+:root {
+  /* Brand colors - Green/Teal palette */
+  --color-green-400: hsl(172, 67%, 45%);  /* Primary accent (buttons, results) */
+  --color-green-900: hsl(183, 100%, 15%); /* Dark teal (results background) */
+  
+  /* Neutral grays for text and UI elements */
+  --color-grey-500: hsl(186, 14%, 43%);  /* Muted text (labels) */
+  --color-grey-400: hsl(184, 14%, 56%);  /* Placeholder text */
+  --color-grey-200: hsl(185, 41%, 84%);  /* Light gray (borders) */
+  --color-grey-50: hsl(189, 47%, 97%);   /* Very light (input backgrounds) */
+  
+  /* White and page background */
+  --color-white: hsl(0, 100%, 100%);     /* Pure white (card background) */
+  --color-page-bg: hsl(185, 41%, 84%);   /* Overall page background */
+  
+  /* Interactive states */
+  --color-tip-hover: hsl(173, 61%, 77%); /* Lighter green for button hover */
+  --color-error: hsl(13, 70%, 60%);      /* Red for error messages */
+  
+  /* Design tokens - consistent spacing and sizing */
+  --radius-card: 25px;   /* Large radius for main card */
+  --radius-panel: 15px;  /* Medium radius for result panel */
+  --radius-control: 8px; /* Small radius for buttons/inputs */
+  
+  /* Soft shadow for depth (card floating effect) */
+  --shadow-soft: 0 20px 40px hsla(183, 100%, 15%, 0.08);
+}
+
+
+/* ==========================================================================
+   CSS RESET
+   ========================================================================== */
+
+/* 
+  WHY: Browsers add default styles (margins, paddings) that vary between browsers.
+  Resetting ensures consistent appearance across Chrome, Firefox, Safari, etc.
+*/
+
+/* 
+  Box-sizing: border-box
+  Makes padding and borders included in element's total width/height.
+  Without this: width: 100px + padding: 20px = 140px total
+  With this: width: 100px includes padding = 100px total (much easier!)
+*/
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+/* Remove default margins from ALL elements */
+* {
+  margin: 0;
+}
+
+/* Ensure html and body take full viewport height */
+html,
+body {
+  min-height: 100%;
+}
+
+/* Base body styles - applied to all text unless overridden */
+body {
+  background-color: var(--color-page-bg);
+  color: var(--color-green-900);
+  font-family: "Space Mono", monospace;  /* Fallback: monospace if font fails */
+  font-weight: 700;
+  line-height: 1.5;  /* Improves readability (1.5x font size) */
+  
+  /* Sticky footer pattern: pushes attribution to bottom */
+  display: flex;
+  flex-direction: column;
+}
+
+/* 
+  Images: block display removes the tiny gap below images (caused by inline default).
+  max-width: 100% makes images responsive (won't overflow their container).
+  height: auto maintains aspect ratio when resizing.
+*/
+img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+/* 
+  Form elements inherit font from parent.
+  Without this, inputs might use browser default fonts (looks inconsistent).
+*/
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+
+/* 
+  Reset button defaults:
+  - Remove border (browsers add 3D-looking borders)
+  - Remove background (browsers add gray gradient)
+  Now we have full control over button styling!
+*/
+button {
+  border: 0;
+  background: none;
+}
+
+/* 
+  Fieldset reset:
+  Browsers add default border and padding to <fieldset>.
+  We remove it for modern, custom styling.
+  min-width: 0 prevents grid/flex layout issues.
+*/
+fieldset {
+  border: 0;
+  padding: 0;
+  margin: 0;
+  min-width: 0;
+}
+
+/* Remove default padding from <legend> (varies by browser) */
+legend {
+  padding: 0;
+}
+
+/* Remove default left margin from <dd> in description lists */
+dd {
+  margin: 0;
+}
+
+/* 
+  Utility class: [hidden]
+  Hides elements from both visual display AND screen readers.
+  !important ensures it overrides any other display rules.
+*/
+[hidden] {
+  display: none !important;
+}
+
+
+/* ==========================================================================
+   REMOVE NUMBER INPUT SPINNERS
+   ========================================================================== */
+
+/* 
+  WHY: Browsers add up/down arrows to number inputs (spin buttons).
+  They're ugly, hard to style, and don't match the design.
+  We hide them for a cleaner look.
+*/
+
+/* Firefox */
+input[type="number"] {
+  -moz-appearance: textfield;  /* Removes spinner in Firefox */
+  appearance: textfield;
+}
+
+/* Chrome, Safari, Edge, Opera (WebKit browsers) */
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;  /* Hides the spinner */
+  margin: 0;  /* Removes any spacing */
+}
+
+
+/* ==========================================================================
+   PAGE LAYOUT
+   ========================================================================== */
+
+/* 
+  Main calculator container
+  Centers the calculator on the page and controls max width
+*/
+.calculator {
+  width: min(100%, 920px);
+  margin-inline: auto;
+  padding: 3rem 1rem 2rem;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+/* Logo container - centers the logo image */
+.calculator__header {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 2.5rem;
+}
+
+/* 
+  Logo text wrapper
+  line-height: 0 removes extra space below the image
+  (prevents tiny gap caused by text baseline)
+*/
+.calculator__logo {
+  line-height: 0;
+}
+
+/* Center the logo image within its container */
+.calculator__logo-image {
+  margin-inline: auto;
+}
+
+/* 
+  Main card - the white rounded container
+  This holds the entire calculator interface
+*/
+.calculator__card {
+  background-color: var(--color-white);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-soft);
+  padding: 2rem 1.5rem;
+}
+
+/* 
+  Form layout
+  Uses flexbox to stack inputs and results vertically (mobile-first)
+*/
+.calculator__form {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+
+/* ==========================================================================
+   LEFT PANEL - INPUT CONTROLS
+   ========================================================================== */
+
+/* 
+  Calculator inputs section (Bill, Tip %, People)
+  Uses CSS Grid for vertical stacking with consistent gaps
+*/
+.calculator__controls {
+  display: grid;
+  gap: 2rem;
+}
+
+/* 
+  Individual field wrapper (label + input)
+  Grid layout allows easy stacking of label above input
+*/
+.calculator__field {
+  display: grid;
+  gap: 0.5rem;
+}
+
+/* Tip field has different spacing (for the tip buttons grid) */
+.calculator__field--tip {
+  gap: 1rem;
+}
+
+/* 
+  Field header: label + error message
+  Flexbox positions them side-by-side with space between
+*/
+.calculator__field-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+/* Label and legend styling (consistent gray text) */
+.calculator__label,
+.calculator__legend {
+  color: var(--color-grey-500);
+  font-size: 0.95rem;
+}
+
+/* Error message styling (red text, right-aligned) */
+.calculator__error {
+  color: var(--color-error);
+  font-size: 0.95rem;
+  text-align: right;
+}
+
+
+/* ==========================================================================
+   INPUT STYLES
+   ========================================================================== */
+
+/* 
+  Input wrapper - creates the gray background box
+  Position: relative allows absolute positioning of the icon inside
+*/
+.calculator__input-wrapper {
+  position: relative;
+  background-color: var(--color-grey-50);
+  border: 2px solid transparent;
+  border-radius: var(--radius-control);
+  transition: border-color 0.2s ease, background-color 0.2s ease;
+}
+
+/* Hover state: subtle green border preview */
+.calculator__input-wrapper:hover {
+  border-color: var(--color-green-400);
+}
+
+/* 
+  Focus-within: applies when ANY descendant has focus
+  This means the wrapper highlights when the input inside is focused
+  (great for UX - shows the whole field is active)
+*/
+.calculator__input-wrapper:focus-within {
+  border-color: var(--color-green-400);
+}
+
+/* 
+  Dollar/Person icon inside input
+  Absolute positioning places it on the left side of the wrapper
+*/
+.calculator__input-icon {
+  position: absolute;
+  left: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+}
+
+/* 
+  Actual input field styling
+  Transparent background shows the wrapper's gray background
+*/
+.calculator__input,
+.calculator__tip-input {
+  width: 100%;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: var(--color-green-900);
+  font-size: 24px;
+  font-weight: 700;
+  caret-color: var(--color-green-400);
+}
+
+/* Main input: right-aligned text with padding for the icon */
+.calculator__input {
+  text-align: right;
+  padding: 0.6rem 1rem 0.6rem 2.75rem;
+}
+
+/* Placeholder text styling (lighter gray) */
+.calculator__input::placeholder,
+.calculator__tip-input::placeholder {
+  color: var(--color-grey-400);
+}
+
+/* Remove default outline on focus (wrapper shows focus state instead) */
+.calculator__input:focus,
+.calculator__tip-input:focus {
+  outline: none;
+}
+
+
+/* ==========================================================================
+   ERROR STATES
+   ========================================================================== */
+
+/* 
+  When a field has an error, add the class .is-error
+  This changes the border to red
+  
+  Usage: JavaScript adds this class when validation fails
+*/
+.calculator__field.is-error .calculator__input-wrapper,
+.calculator__input-wrapper.is-error {
+  border-color: var(--color-error);
+}
+
+/* Also color the error message text red */
+.calculator__field.is-error .calculator__error {
+  color: var(--color-error);
+}
+
+
+/* ==========================================================================
+   TIP OPTIONS (BUTTONS GRID)
+   ========================================================================== */
+
+/* 
+  Tip percentage buttons layout
+  Grid with 2 columns on mobile (wraps to multiple rows)
+*/
+.calculator__tip-options {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+/* Buttons and custom input share the same minimum height */
+.calculator__tip-button,
+.calculator__tip-input {
+  min-height: 3rem;
+  border-radius: var(--radius-control);
+}
+
+/* 
+  Tip button default state
+  Dark teal background, white text
+*/
+.calculator__tip-button {
+  background-color: var(--color-green-900);
+  color: var(--color-white);
+  font-size: 24px;
+  line-height: 1;
+  padding: 0.75rem 1rem;
+  cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease, transform 0.1s ease;
+}
+
+/* Hover state: lighter green, dark text */
+.calculator__tip-button:hover {
+  background-color: var(--color-tip-hover);
+  color: var(--color-green-900);
+}
+
+/* 
+  Focus-visible: only shows outline when navigating with keyboard
+  (doesn't show on mouse click - cleaner UX)
+  This is important for accessibility!
+*/
+.calculator__tip-button:focus-visible {
+  outline: 2px solid var(--color-green-400);
+  outline-offset: 2px;
+}
+
+/* Active state (while clicking): slight press down effect */
+.calculator__tip-button:active {
+  transform: translateY(1px);
+}
+
+/* 
+  Selected/active button state
+  When a tip is selected, it gets the accent color
+  
+  Two ways to trigger this:
+  - .is-active class (added by JavaScript)
+  - [aria-pressed="true"] attribute (for accessibility)
+*/
+.calculator__tip-button.is-active,
+.calculator__tip-button[aria-pressed="true"] {
+  background-color: var(--color-green-400);
+  color: var(--color-green-900);
+}
+
+/* 
+  Custom tip input field
+  Looks similar to buttons but is an editable text field
+*/
+.calculator__tip-input {
+  background-color: var(--color-grey-50);
+  border: 2px solid transparent;
+  padding: 0.6rem 0.75rem;
+  text-align: right;
+  transition: border-color 0.2s ease, background-color 0.2s ease;
+}
+
+.calculator__tip-input:hover {
+  border-color: var(--color-green-400);
+}
+
+.calculator__tip-input:focus {
+  border-color: var(--color-green-400);
+}
+
+
+/* ==========================================================================
+   RESULTS PANEL (RIGHT SIDE)
+   ========================================================================== */
+
+/* 
+  Results container - dark teal background
+  Flexbox for vertical layout with space between content and reset button
+*/
+.calculator__results {
+  background-color: var(--color-green-900);
+  border-radius: var(--radius-panel);
+  padding: 2rem 1.5rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 2rem;
+}
+
+/* 
+  Summary list (Tip Amount + Total)
+  Grid layout for consistent spacing
+*/
+.calculator__summary {
+  display: grid;
+  gap: 1.5rem;
+}
+
+/* 
+  Individual result row
+  Flexbox aligns label (left) and value (right)
+*/
+.calculator__result {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+/* Result heading stacks label and unit vertically */
+.calculator__result-heading {
+  display: grid;
+  gap: 0.2rem;
+}
+
+/* Label text (white) */
+.calculator__result-label {
+  color: var(--color-white);
+  font-size: 1rem;
+}
+
+/* Unit text ("/ person") - smaller, gray */
+.calculator__result-unit {
+  color: var(--color-grey-400);
+  font-size: 0.8125rem;
+}
+
+/* Value aligns to the right */
+.calculator__result-value {
+  text-align: right;
+}
+
+/* 
+  Dollar amount display
+  clamp() = responsive font size (min, preferred, max)
+  This scales smoothly between 2rem and 3rem based on viewport
+*/
+.calculator__output {
+  color: var(--color-green-400);
+  font-size: clamp(2rem, 8vw, 3rem);
+  line-height: 1;
+  letter-spacing: -0.04em;
+}
+
+
+/* ==========================================================================
+   RESET BUTTON
+   ========================================================================== */
+
+/* 
+  Reset button - clears all form fields
+  Full width, prominent at bottom of results panel
+*/
+.calculator__reset {
+  width: 100%;
+  background-color: var(--color-green-400);
+  color: var(--color-green-900);
+  text-transform: uppercase;
+  font-size: 1.25rem;
+  font-weight: 700;
+  border-radius: var(--radius-control);
+  padding: 0.9rem 1rem;
+  cursor: pointer;
+  transition: background-color 0.2s ease, opacity 0.2s ease, transform 0.1s ease;
+  margin-top: auto;
+}
+
+/* Hover state */
+.calculator__reset:hover:not(:disabled) {
+  background-color: var(--color-tip-hover);
+}
+
+/* Focus state for keyboard navigation */
+.calculator__reset:focus-visible {
+  outline: 2px solid var(--color-green-400);
+  outline-offset: 3px;
+}
+
+/* Active state (while clicking) */
+.calculator__reset:active:not(:disabled) {
+  transform: translateY(1px);
+}
+
+/* 
+  Disabled state
+  When no tip is selected, reset button is disabled
+  Lower opacity and different background show it's inactive
+*/
+.calculator__reset:disabled {
+  background-color: hsl(183, 79%, 24%);
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+
+/* ==========================================================================
+   ATTRIBUTION FOOTER
+   ========================================================================== */
+
+/* Credit link at bottom of page (required by Frontend Mentor) */
+.attribution {
+  font-size: 0.75rem;
+  text-align: center;
+  color: var(--color-grey-500);
+  padding: 0 1rem 1.5rem;
+}
+
+/* Link styling */
+.attribution a {
+  color: var(--color-green-900);
+  text-decoration: none;
+}
+
+/* Hover and focus states for links */
+.attribution a:hover,
+.attribution a:focus-visible {
+  color: var(--color-green-400);
+  text-decoration: underline;
+}
+
+
+/* ==========================================================================
+   DESKTOP RESPONSIVE STYLES
+   ========================================================================== */
+
+/* 
+  Media query: applies when viewport is 768px or wider
+  This is the tablet/desktop breakpoint
+  
+  Mobile-first approach: we styled for mobile first, then enhance for larger screens
+*/
+@media (min-width: 768px) {
+  /* More padding on larger screens */
+  .calculator {
+    padding: 4rem 1.5rem 2rem;
+  }
+
+  /* More padding inside the card */
+  .calculator__card {
+    padding: 2rem;
+  }
+
+  /* 
+    Two-column layout on desktop
+    Inputs on left, results on right (equal width)
+    minmax(0, 1fr) prevents overflow issues
+  */
+  .calculator__form {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 2rem;
+    align-items: stretch;
+  }
+
+  /* Extra padding inside controls section */
+  .calculator__controls {
+    padding: 1rem;
+  }
+
+  /* 3 columns for tip buttons on wider screens */
+  .calculator__tip-options {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  /* More padding in results panel */
+  .calculator__results {
+    padding: 2.5rem;
+  }
+
+  /* More space between tip and total rows */
+  .calculator__summary {
+    gap: 2rem;
+  }
+
+  /* Larger output numbers on desktop */
+  .calculator__output {
+    font-size: clamp(2.5rem, 4vw, 3rem);
+  }
+}
