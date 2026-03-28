@@ -223,7 +223,7 @@ input[type="number"]::-webkit-inner-spin-button {
 .calculator__header {
   display: flex;
   justify-content: center;
-  margin-bottom: 2.5rem;
+  margin-bottom: 6rem;
 }
 
 /* 
